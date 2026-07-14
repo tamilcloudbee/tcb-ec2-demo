@@ -1,4 +1,4 @@
-# tcb-ec2-demo
+# Tamil CloudBee - AWS EC2-demo 
 
 ```
 #!/bin/bash
