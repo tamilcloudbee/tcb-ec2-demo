@@ -1,21 +1,26 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 echo "=========================================="
-echo " Tamil CloudBee EC2 Demo"
-echo " Installing Apache Web Server..."
+echo "Tamil CloudBee EC2 Apache Demo"
 echo "=========================================="
 
-sudo apt update
-sudo apt install apache2 -y
+export DEBIAN_FRONTEND=noninteractive
 
-sudo systemctl enable apache2
-sudo systemctl start apache2
+echo "Updating package list..."
+apt-get update -y
 
-sudo rm -f /var/www/html/index.html
+echo "Installing Apache..."
+apt-get install -y apache2
 
-sudo tee /var/www/html/index.html > /dev/null <<'EOF'
+echo "Enabling Apache service..."
+systemctl enable apache2
+
+echo "Starting Apache service..."
+systemctl restart apache2
+
+cat > /var/www/html/index.html <<'EOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,97 +33,55 @@ sudo tee /var/www/html/index.html > /dev/null <<'EOF'
 
 body{
     margin:0;
+    padding:0;
     font-family:Arial,Helvetica,sans-serif;
-    background:linear-gradient(135deg,#5d1835,#8b1e3f);
-    color:white;
-    text-align:center;
-    overflow-x: hidden;
+    background:#5d1835;
+    color:#ffffff;
 }
 
 .container{
-    margin-top:70px;
-}
-
-/* Keyframe Animations */
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
-    100% { transform: translateY(0px); }
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.logo{
-    font-size:70px;
-    display: inline-block;
-    animation: float 4s ease-in-out infinite; /* Continuous floating effect */
+    max-width:900px;
+    margin:60px auto;
+    background:#ffffff;
+    color:#333333;
+    padding:40px;
+    border-radius:10px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,0.25);
 }
 
 h1{
-    font-size:52px;
-    margin-bottom:5px;
-    animation: fadeInUp 0.8s ease-out forwards;
+    color:#5d1835;
+    margin-bottom:10px;
 }
 
 h2{
-    color:#FFD54F;
-    animation: fadeInUp 1s ease-out forwards;
+    color:#8b1e3f;
 }
 
-.badge{
-    display:inline-block;
-    margin-top:20px;
-    background:#FFD54F;
-    color:#5d1835;
-    padding:10px 25px;
-    border-radius:30px;
-    font-weight:bold;
-    animation: fadeInUp 1.2s ease-out forwards;
-    transition: transform 0.3s ease;
-}
-
-.badge:hover {
-    transform: scale(1.1); /* Slight pop on hover */
-}
-
-.card{
-    width:70%;
-    margin:auto;
-    margin-top:40px;
-    background:white;
-    color:#333;
-    border-radius:12px;
-    padding:30px;
-    box-shadow:0px 10px 30px rgba(0,0,0,0.3);
-    animation: fadeInUp 1.4s ease-out forwards;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-5px); /* Card lifts up when hovered */
-    box-shadow: 0px 15px 35px rgba(0,0,0,0.4);
-}
-
-.success{
+.status{
     color:green;
-    font-size:28px;
+    font-size:24px;
     font-weight:bold;
+    margin:30px 0;
+}
+
+.info{
+    margin-top:30px;
+    padding:20px;
+    background:#f5f5f5;
+    border-radius:8px;
+    text-align:left;
+}
+
+.info p{
+    margin:10px 0;
 }
 
 .footer{
-    margin-top:60px;
-    color:#ddd;
-    font-size:18px;
-    animation: fadeInUp 1.6s ease-out forwards;
+    margin-top:40px;
+    color:#666666;
+    font-size:16px;
 }
 
 </style>
@@ -129,55 +92,40 @@ h2{
 
 <div class="container">
 
-<div class="logo">
-☁️🐝
-</div>
-
 <h1>Tamil CloudBee</h1>
 
-<h2>Welcome to Tamil CloudBee Demo</h2>
+<h2>AWS EC2 Apache Demo</h2>
 
-<div class="badge">
-AWS EC2 + Apache Web Server
+<div class="status">
+Apache Web Server Installed Successfully
 </div>
 
-<div class="card">
-
-<p class="success">
-✅ Congratulations!
-</p>
-
-<h2>Your Apache Web Server is Running Successfully</h2>
-
 <p>
-This website is hosted on an
-<b>Amazon EC2 Ubuntu Instance</b>
-using
-<b>Apache HTTP Server</b>.
+This web page is hosted on an Amazon EC2 Ubuntu instance using Apache HTTP Server.
 </p>
 
-<p>
-Created as part of the
-<b>Tamil CloudBee AWS EC2 Demo</b>
-to demonstrate how to deploy a website on AWS.
-</p>
+<div class="info">
 
-<hr>
+<h3>Server Information</h3>
 
-<h3>Technologies Used</h3>
+<p><strong>Cloud Platform:</strong> Amazon Web Services</p>
 
-<p>
-☁️ AWS EC2<br><br>
-🐧 Ubuntu Linux<br><br>
-🌐 Apache HTTP Server
-</p>
+<p><strong>Compute Service:</strong> Amazon EC2</p>
+
+<p><strong>Operating System:</strong> Ubuntu Linux</p>
+
+<p><strong>Web Server:</strong> Apache HTTP Server</p>
 
 </div>
 
 <div class="footer">
-Learn DevOps • AWS • Linux • Cloud • Kubernetes
+
+Tamil CloudBee
+
 <br><br>
-❤️ Thank you for watching Tamil CloudBee
+
+Learn DevOps, AWS, Linux, Kubernetes and Cloud Computing
+
 </div>
 
 </div>
@@ -186,20 +134,43 @@ Learn DevOps • AWS • Linux • Cloud • Kubernetes
 </html>
 EOF
 
-sudo chown -R www-data:www-data /var/www/html
+chown -R www-data:www-data /var/www/html
 
-echo ""
-echo "=========================================="
-echo " Installation Completed Successfully"
-echo "=========================================="
-echo ""
+echo "Verifying Apache service..."
 
-INSTANCE_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 || true)
-
-if [ -n "$INSTANCE_IP" ]; then
-    echo "Open your browser:"
-    echo ""
-    echo "http://$INSTANCE_IP"
+if systemctl is-active --quiet apache2
+then
+    echo "Apache service is running."
 else
-    echo "Apache Installed."
+    echo "Apache service failed to start."
+    journalctl -u apache2 --no-pager
+    exit 1
+fi
+
+echo ""
+echo "=========================================="
+echo "Installation Completed Successfully"
+echo "=========================================="
+
+TOKEN=$(curl -s -X PUT \
+http://169.254.169.254/latest/api/token \
+-H "X-aws-ec2-metadata-token-ttl-seconds: 21600" || true)
+
+if [ -n "$TOKEN" ]; then
+    PUBLIC_IP=$(curl -s \
+    -H "X-aws-ec2-metadata-token: $TOKEN" \
+    http://169.254.169.254/latest/meta-data/public-ipv4 || true)
+else
+    PUBLIC_IP=$(curl -s \
+    http://169.254.169.254/latest/meta-data/public-ipv4 || true)
+fi
+
+echo ""
+
+if [ -n "$PUBLIC_IP" ]; then
+    echo "Open the following URL in your browser:"
+    echo ""
+    echo "http://$PUBLIC_IP"
+else
+    echo "No public IP address found."
 fi
