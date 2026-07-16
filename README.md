@@ -7,6 +7,6 @@ cd tcb-ec2-demo
 
 chmod +x ec2-demo-webserver.sh
 
-sudo ./ec2-demo-webserver.sh
+sudo bash ec2-demo-webserver.sh
 
 ```
